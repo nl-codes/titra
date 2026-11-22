@@ -6,6 +6,29 @@
   --line: #e7e9ee;
   --muted: #737785;
   --blue: #2563eb;
+  --surface: #ffffff;
+  --surface-raised: #fbfbfd;
+  --surface-subtle: #f1f3f7;
+  --surface-border: #f0f1f4;
+  --control-text: #454852;
+  --label-text: #555963;
+  --input-text: #23252b;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0d1117;
+  --foreground: #e6edf3;
+  --line: #30363d;
+  --muted: #8b949e;
+  --blue: #58a6ff;
+  --surface: #161b22;
+  --surface-raised: #0d1117;
+  --surface-subtle: #21262d;
+  --surface-border: #21262d;
+  --control-text: #c9d1d9;
+  --label-text: #c9d1d9;
+  --input-text: #f0f6fc;
 }
 
 @theme inline {
@@ -42,7 +65,7 @@ button {
   display: grid;
   grid-template-columns: 220px minmax(0, 760px);
   justify-content: center;
-  background: #fff;
+  background: var(--surface);
 }
 
 .app-sidebar {
@@ -54,7 +77,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  background: #fbfbfd;
+  background: var(--surface-raised);
 }
 
 .brand {
@@ -85,8 +108,8 @@ button {
   height: 38px;
   border: 1px solid var(--line);
   border-radius: 9px;
-  background: #fff;
-  color: #4d5059;
+  background: var(--surface);
+  color: var(--control-text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -95,7 +118,7 @@ button {
 .timeline-page {
   min-height: 100vh;
   width: 100%;
-  background: #fff;
+  background: var(--surface);
   position: relative;
 }
 
@@ -109,7 +132,7 @@ button {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(255, 255, 255, 0.96);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
   backdrop-filter: blur(12px);
 }
 
@@ -121,8 +144,8 @@ button {
 
 .today-button {
   min-height: 38px;
-  background: #f1f3f7;
-  color: #454852;
+  background: var(--surface-subtle);
+  color: var(--control-text);
   font-size: 13px;
 }
 
@@ -141,8 +164,8 @@ button {
 .inbox-button {
   min-height: 38px;
   justify-self: end;
-  background: #f1f3f7;
-  color: #454852;
+  background: var(--surface-subtle);
+  color: var(--control-text);
   font-size: 13px;
 }
 
@@ -163,7 +186,7 @@ button {
   top: 66px;
   z-index: 30;
   width: 280px;
-  background: white;
+  background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 14px;
   box-shadow: 0 16px 40px rgba(35, 38, 47, 0.14);
@@ -182,7 +205,7 @@ button {
   grid-template-columns: 8px 1fr 92px;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid #f0f1f4;
+  border-bottom: 1px solid var(--surface-border);
   padding: 6px 8px;
   font-size: 13px;
 }
@@ -214,7 +237,7 @@ button {
   display: grid;
   grid-template-columns: 72px minmax(0, 1fr);
   min-height: 64px;
-  border-bottom: 1px solid #f0f1f4;
+  border-bottom: 1px solid var(--surface-border);
 }
 
 .hour-label {
@@ -258,10 +281,10 @@ button {
 .task-block {
   min-height: 58px;
   width: calc(100% - 4px);
-  border: 1px solid #e9eaf0;
+  border: 1px solid var(--line);
   border-left: 4px solid;
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface);
   display: grid;
   grid-template-columns: 30px minmax(0, 1fr) auto;
   align-items: start;
@@ -285,7 +308,7 @@ button {
   height: 20px;
   border: 1.5px solid #aaaeba;
   border-radius: 50%;
-  background: white;
+  background: var(--surface);
   color: white;
   display: inline-grid;
   place-items: center;
@@ -342,7 +365,7 @@ button {
   height: 30px;
   border: 1px solid var(--line);
   border-radius: 7px;
-  background: white;
+  background: var(--surface);
   display: inline-grid;
   place-items: center;
   color: #656873;
@@ -357,7 +380,7 @@ button {
   gap: 5px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: white;
+  background: var(--surface);
   padding: 6px;
   box-shadow: 0 10px 24px rgba(35, 38, 47, 0.12);
 }
@@ -377,21 +400,40 @@ button {
   position: fixed;
   inset: 0;
   z-index: 10000;
-  background: rgba(21, 24, 34, 0.38);
-  backdrop-filter: blur(3px);
+  background: rgba(21, 24, 34, 0.48);
+  backdrop-filter: blur(6px);
   display: grid;
   place-items: center;
-  padding: 20px;
+  padding: 24px;
 }
 
 .task-modal {
   width: min(540px, 100%);
   max-height: calc(100vh - 40px);
   overflow-y: auto;
-  border-radius: 16px;
-  background: white;
-  box-shadow: 0 24px 70px rgba(21, 24, 34, 0.22);
-  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: 0 28px 80px rgba(21, 24, 34, 0.28);
+  padding: 24px;
+  animation: task-modal-pop 180ms ease-out;
+}
+
+@keyframes task-modal-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .task-modal {
+      animation: none;
+    }
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal-header {
@@ -425,7 +467,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: #555963;
+  color: var(--label-text);
   font-size: 12px;
   font-weight: 700;
 }
@@ -436,8 +478,8 @@ button {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 9px;
-  background: white;
-  color: #23252b;
+  background: var(--surface);
+  color: var(--input-text);
   padding: 9px 10px;
   outline: none;
   font-size: 13px;
@@ -482,6 +524,7 @@ button {
   padding: 0;
   margin: 0;
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   align-items: center;
 }
@@ -489,7 +532,7 @@ button {
 .weekday-fieldset legend,
 .color-fieldset legend {
   width: 100%;
-  color: #555963;
+  color: var(--label-text);
   font-size: 12px;
   font-weight: 700;
   margin-bottom: 6px;
@@ -578,28 +621,142 @@ button {
   font-size: 12px;
 }
 
+.theme-toggle {
+  margin-top: auto;
+  height: 42px;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-subtle);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 10px;
+}
+
+.mobile-navigation {
+  display: none;
+}
+
+.theme-toggle-track {
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  background: #aeb4bf;
+  padding: 3px;
+  transition: background 160ms ease;
+}
+
+.theme-toggle-thumb {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.24);
+  transition: transform 160ms ease;
+}
+
+.theme-icon {
+  flex: none;
+}
+
+:root[data-theme="dark"] .theme-toggle-track {
+  background: var(--blue);
+}
+
+:root[data-theme="dark"] .theme-toggle-thumb {
+  transform: translateX(16px);
+}
+
+:root[data-theme="dark"] .theme-icon-light,
+:root:not([data-theme="dark"]) .theme-icon-dark {
+  opacity: 0.45;
+}
+
 @media (max-width: 760px) {
+  .modal-backdrop {
+    align-items: center;
+    padding: 12px;
+  }
+
+  .task-modal {
+    max-height: calc(100vh - 24px);
+    border-radius: 20px;
+    padding: 18px;
+  }
+
   .app-shell {
     display: block;
   }
 
   .app-sidebar {
-    border: 0;
-    background: transparent;
-    padding: 0;
-    height: auto;
-    width: auto;
-  }
-
-  .app-sidebar .brand {
     display: none;
   }
 
-  .app-sidebar > .primary-button {
+  .mobile-navigation {
+    display: block;
+  }
+
+  .mobile-menu-button {
     position: fixed;
-    left: 12px;
-    bottom: 12px;
-    z-index: 60;
+    left: 10px;
+    top: 20px;
+    z-index: 80;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--control-text);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 4px 14px rgba(20, 24, 32, 0.08);
+  }
+
+  .mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    border: 0;
+    background: rgba(21, 24, 34, 0.32);
+  }
+
+  .mobile-menu-drawer {
+    position: fixed;
+    left: 10px;
+    top: 66px;
+    z-index: 100;
+    width: 220px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: 0 18px 44px rgba(20, 24, 32, 0.18);
+    padding: 16px;
+  }
+
+  .mobile-menu-drawer .brand {
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .mobile-menu-drawer .theme-toggle {
+    width: 100%;
+  }
+
+  .mobile-create-button {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 80;
+    width: 56px;
+    height: 56px;
+    min-height: 56px;
+    border-radius: 50%;
+    padding: 0;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.32);
   }
 
   .timeline-page {
@@ -608,7 +765,7 @@ button {
 
   .day-header {
     grid-template-columns: 150px 1fr 44px;
-    padding: 0 10px;
+    padding: 0 10px 0 58px;
   }
 
   .date-heading h1 {

@@ -5,9 +5,22 @@ import { createPortal } from "react-dom";
 import { Plus, X } from "lucide-react";
 import { createTask, type CreateTaskInput } from "@/actions/tasks";
 
-const colors = ["#2563eb", "#7c3aed", "#db2777", "#ea580c", "#059669"];
+const colors = [
+  "#2563eb",
+  "#4f46e5",
+  "#7c3aed",
+  "#a855f7",
+  "#db2777",
+  "#e11d48",
+  "#ea580c",
+  "#d97706",
+  "#65a30d",
+  "#059669",
+  "#0d9488",
+  "#0891b2",
+];
 
-export function TaskModal() {
+export function TaskModal({ compact = false }: { compact?: boolean }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -73,9 +86,14 @@ export function TaskModal() {
 
   return (
     <>
-      <button className="primary-button" type="button" onClick={() => setOpen(true)}>
+      <button
+        className={compact ? "primary-button mobile-create-button" : "primary-button"}
+        type="button"
+        aria-label="Create new task"
+        onClick={() => setOpen(true)}
+      >
         <Plus size={18} />
-        New task
+        {!compact && <span>New task</span>}
       </button>
 
       {open && typeof document !== "undefined" && createPortal(

@@ -1,4 +1,6 @@
 import { TaskModal } from "@/components/TaskModal";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { MobileNavigation } from "@/components/MobileNavigation";
 import { Timeline } from "@/components/Timeline";
 import { connectToDatabase } from "@/lib/db";
 import {
@@ -81,7 +83,9 @@ export default async function Home({
       <aside className="app-sidebar">
         <div className="brand">Titra</div>
         <TaskModal />
+        <ThemeToggle />
       </aside>
+      <MobileNavigation />
       <Timeline date={date} occurrences={occurrences} unscheduled={unscheduled} />
     </div>
   );
