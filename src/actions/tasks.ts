@@ -67,11 +67,12 @@ export async function createTask(input: CreateTaskInput): Promise<{
 
   if (
     input.recurrence !== "one-time" &&
-    (!/^([01]\d|2[0-3]):[0-5]\d$/.test(input.time) ||
+    (!/^\d{4}-\d{2}-\d{2}$/.test(input.oneTimeDate) ||
+      !/^([01]\d|2[0-3]):[0-5]\d$/.test(input.time) ||
       !Number.isFinite(input.durationMinutes) ||
       input.durationMinutes < 1)
   ) {
-    return { success: false, error: "Enter a valid time and duration." };
+    return { success: false, error: "Choose a valid date and enter a valid time and duration." };
   }
 
   if (
@@ -84,10 +85,7 @@ export async function createTask(input: CreateTaskInput): Promise<{
 
   try {
     await connectToDatabase();
-    const startDate =
-      input.recurrence === "one-time"
-        ? parseLocalDate(input.oneTimeDate)
-        : new Date();
+    const startDate = parseLocalDate(input.oneTimeDate);
 
     await TaskModel.create({
       userId: "demo-user",
