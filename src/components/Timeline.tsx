@@ -142,8 +142,8 @@ export function Timeline({
                         <ChevronRight size={20} />
                     </button>
                 </div>
-                <div className="date-heading">
-                    <CalendarDays size={18} />
+                <div className="date-heading" aria-label={formatHeader(date)}>
+                    <CalendarDays className="date-heading-icon" size={18} />
                     <h1>{formatHeader(date)}</h1>
                 </div>
                 <button

@@ -1019,7 +1019,7 @@ button {
     .mobile-menu-button {
         position: fixed;
         left: 10px;
-        top: 16px;
+        top: 8px;
         z-index: 110;
         width: 38px;
         height: 38px;
@@ -1108,27 +1108,73 @@ button {
     }
 
     .day-header {
-        grid-template-columns: 150px 1fr 44px;
-        padding: 0 10px 0 58px;
+        height: 108px;
+        display: block;
+        position: relative;
+        padding: 0 10px;
+    }
+
+    .day-header .date-nav {
+        position: absolute;
+        left: 50%;
+        top: 27px;
+        height: 54px;
+        width: 150px;
+        transform: translate(-50%, -50%);
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .day-header .date-heading {
+        position: absolute;
+        left: 50%;
+        top: 81px;
+        transform: translate(-50%, -50%);
+        width: max-content;
+        max-width: calc(100% - 32px);
+    }
+
+    .day-header .inbox-button {
+        position: absolute;
+        right: 10px;
+        top: 8px;
     }
 
     .date-heading h1 {
         font-size: 14px;
     }
 
+    .date-heading-icon {
+        display: none;
+    }
+
     .inbox-button {
         width: 38px;
+        height: 38px;
+        min-height: 38px;
         padding: 0;
+        display: block;
+        position: relative;
     }
 
     .inbox-button {
         font-size: 0;
     }
 
+    .inbox-button > svg {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 18px;
+        height: 18px;
+        transform: translate(-50%, -50%);
+    }
+
     .inbox-button span {
         position: absolute;
-        right: 4px;
-        top: 8px;
+        right: 2px;
+        top: 2px;
     }
 
     .hour-row {
