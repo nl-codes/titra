@@ -17,18 +17,18 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #0d1117;
-  --foreground: #e6edf3;
-  --line: #30363d;
-  --muted: #8b949e;
-  --blue: #58a6ff;
-  --surface: #161b22;
-  --surface-raised: #0d1117;
-  --surface-subtle: #21262d;
-  --surface-border: #21262d;
-  --control-text: #c9d1d9;
-  --label-text: #c9d1d9;
-  --input-text: #f0f6fc;
+  --background: #09080c;
+  --foreground: #f2effa;
+  --line: #30283d;
+  --muted: #aaa1ba;
+  --blue: #9b5cff;
+  --surface: #100d16;
+  --surface-raised: #09080c;
+  --surface-subtle: #1b1624;
+  --surface-border: #261f32;
+  --control-text: #ddd6ec;
+  --label-text: #d5cce7;
+  --input-text: #f6f2ff;
 }
 
 @theme inline {
@@ -49,6 +49,12 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at 82% 8%, rgba(155, 92, 255, 0.07), transparent 28rem),
+    #09080c;
+}
+
 button,
 input,
 textarea,
@@ -66,6 +72,10 @@ button {
   grid-template-columns: 220px minmax(0, 760px);
   justify-content: center;
   background: var(--surface);
+}
+
+:root[data-theme="dark"] .app-shell {
+  background: #09080c;
 }
 
 .app-sidebar {
