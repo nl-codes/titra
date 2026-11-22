@@ -1,7 +1,7 @@
 import { TaskModal } from "@/components/TaskModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { MobileNavigation } from "@/components/MobileNavigation";
-import { Timeline } from "@/components/Timeline";
+import { DashboardWorkspace } from "@/components/DashboardWorkspace";
 import { connectToDatabase } from "@/lib/db";
 import {
   getTasksForDate,
@@ -86,7 +86,12 @@ export default async function Home({
         <ThemeToggle />
       </aside>
       <MobileNavigation />
-      <Timeline date={date} occurrences={occurrences} unscheduled={unscheduled} />
+      <DashboardWorkspace
+        date={date}
+        tasks={tasks}
+        occurrences={occurrences}
+        unscheduled={unscheduled}
+      />
     </div>
   );
 }
