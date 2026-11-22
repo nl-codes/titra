@@ -1,7 +1,4 @@
-import { TaskModal } from "@/components/TaskModal";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { MobileNavigation } from "@/components/MobileNavigation";
-import { DashboardWorkspace } from "@/components/DashboardWorkspace";
+import { AppShell } from "@/components/AppShell";
 import { connectToDatabase } from "@/lib/db";
 import {
   getTasksForDate,
@@ -79,19 +76,11 @@ export default async function Home({
   );
 
   return (
-    <div className="app-shell">
-      <aside className="app-sidebar">
-        <div className="brand">Titra</div>
-        <TaskModal />
-        <ThemeToggle />
-      </aside>
-      <MobileNavigation />
-      <DashboardWorkspace
-        date={date}
-        tasks={tasks}
-        occurrences={occurrences}
-        unscheduled={unscheduled}
-      />
-    </div>
+    <AppShell
+      date={date}
+      tasks={tasks}
+      occurrences={occurrences}
+      unscheduled={unscheduled}
+    />
   );
 }

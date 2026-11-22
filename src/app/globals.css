@@ -692,10 +692,7 @@ button {
 }
 
 .view-switch {
-  position: fixed;
-  left: 244px;
-  bottom: 18px;
-  z-index: 70;
+  width: 100%;
   height: 42px;
   display: flex;
   align-items: center;
@@ -958,8 +955,9 @@ button {
 
 @media (max-width: 760px) {
   .view-switch {
-    left: 58px;
-    bottom: 16px;
+    position: static;
+    width: 100%;
+    margin-top: 10px;
   }
 
   .task-list-page {

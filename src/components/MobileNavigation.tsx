@@ -4,8 +4,15 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { TaskModal } from "@/components/TaskModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ViewSwitch, type TaskView } from "@/components/ViewSwitch";
 
-export function MobileNavigation() {
+export function MobileNavigation({
+  view,
+  onViewChange,
+}: {
+  view: TaskView;
+  onViewChange: (view: TaskView) => void;
+}) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -42,6 +49,7 @@ export function MobileNavigation() {
           <nav className="mobile-menu-drawer" aria-label="Application menu">
             <div className="brand">Titra</div>
             <ThemeToggle />
+            <ViewSwitch view={view} onChange={onViewChange} />
           </nav>
         </>
       )}
