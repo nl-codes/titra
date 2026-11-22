@@ -16,6 +16,14 @@ export function MobileNavigation({
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    if (open) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = previousOverflow;
+      };
+    }
+
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setOpen(false);
@@ -24,7 +32,12 @@ export function MobileNavigation({
 
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
-  }, []);
+  }, [open]);
+
+  function changeView(view: TaskView) {
+    onViewChange(view);
+    setOpen(false);
+  }
 
   return (
     <div className="mobile-navigation">
@@ -49,7 +62,7 @@ export function MobileNavigation({
           <nav className="mobile-menu-drawer" aria-label="Application menu">
             <div className="brand">Titra</div>
             <ThemeToggle />
-            <ViewSwitch view={view} onChange={onViewChange} />
+            <ViewSwitch view={view} onChange={changeView} />
           </nav>
         </>
       )}
