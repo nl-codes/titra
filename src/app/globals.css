@@ -788,12 +788,40 @@ button {
   background: var(--surface);
   color: var(--foreground);
   display: grid;
-  grid-template-columns: 8px minmax(0, 1fr) auto;
+  grid-template-columns: 8px minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 14px;
   text-align: left;
   padding: 10px 14px 10px 10px;
   transition: border-color 120ms ease, transform 120ms ease, background 120ms ease;
+}
+
+.task-list-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-edit-button {
+  min-width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--control-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.task-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .task-list-row:hover {
@@ -953,6 +981,11 @@ button {
   .task-list-meta {
     grid-column: 2;
     flex-wrap: wrap;
+  }
+
+  .task-list-edit {
+    grid-column: 2;
+    justify-content: flex-start;
   }
 
   .modal-backdrop {

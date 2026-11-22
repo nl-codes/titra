@@ -2,8 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Plus, X } from "lucide-react";
-import { createTask, type CreateTaskInput } from "@/actions/tasks";
+import { Pencil, Plus, X } from "lucide-react";
+import {
+  createTask,
+  updateTask,
+  type CreateTaskInput,
+} from "@/actions/tasks";
+import type { RecurrenceTask } from "@/lib/recurrence";
 
 const colors = [
   "#2563eb",
@@ -20,10 +25,83 @@ const colors = [
   "#0891b2",
 ];
 
-export function TaskModal({ compact = false }: { compact?: boolean }) {
+function inferTaskForm(task: RecurrenceTask | undefined): {
+  recurrence: CreateTaskInput["recurrence"];
+  interval: number;
+  weekdays: number[];
+  startDate: string;
+} {
+  if (!task) {
+    return { recurrence: "one-time", interval: 2, weekdays: [], startDate: "" };
+  }
+  if (!task.isRecurring) {
+    return {
+      recurrence: "one-time",
+      interval: 2,
+      weekdays: [],
+      startDate: task.oneTimeDate ?? "",
+    };
+  }
+
+  const rule = task.rruleString.toUpperCase();
+  const interval = Number(rule.match(/INTERVAL=(\d+)/)?.[1] ?? 1);
+  const byDay = rule.match(/BYDAY=([^;\n]+)/)?.[1] ?? "";
+  const dayMap: Record<string, number> = {
+    MO: 1,
+    TU: 2,
+    WE: 3,
+    TH: 4,
+    FR: 5,
+    SA: 6,
+    SU: 7,
+  };
+  const weekdays = byDay
+    .split(",")
+    .map((day) => dayMap[day])
+    .filter((day) => day != null);
+
+  const dateMatch = rule.match(/DTSTART(?:;[^:]*)?:(\d{4})(\d{2})(\d{2})/);
+  const startDate = dateMatch
+    ? `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`
+    : task.oneTimeDate ?? "";
+
+  if (rule.includes("FREQ=WEEKLY") && weekdays.length > 0) {
+    const weekdaysOnly = weekdays.length === 5 &&
+      [1, 2, 3, 4, 5].every((day) => weekdays.includes(day));
+    return {
+      recurrence: weekdaysOnly ? "weekdays" : "weekdays",
+      interval,
+      weekdays,
+      startDate,
+    };
+  }
+  if (rule.includes("FREQ=DAILY") && interval > 1) {
+    return { recurrence: "every-n-days", interval, weekdays, startDate };
+  }
+  if (rule.includes("FREQ=DAILY")) {
+    return { recurrence: "daily", interval, weekdays, startDate };
+  }
+  if (rule.includes("FREQ=WEEKLY")) {
+    return { recurrence: "weekly", interval, weekdays, startDate };
+  }
+  return { recurrence: "daily", interval, weekdays, startDate };
+}
+
+export function TaskModal({
+  compact = false,
+  initialTask,
+  editTrigger = false,
+  iconOnly = false,
+}: {
+  compact?: boolean;
+  initialTask?: RecurrenceTask;
+  editTrigger?: boolean;
+  iconOnly?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const initialForm = inferTaskForm(initialTask);
 
   useEffect(() => {
     if (!open) {
@@ -73,7 +151,9 @@ export function TaskModal({ compact = false }: { compact?: boolean }) {
       color: String(formData.get("color") ?? colors[0]),
     };
 
-    const result = await createTask(input);
+    const result = initialTask
+      ? await updateTask(initialTask._id, input)
+      : await createTask(input);
     if (!result.success) {
       setError(result.error ?? "Could not create task.");
       setSubmitting(false);
@@ -87,13 +167,21 @@ export function TaskModal({ compact = false }: { compact?: boolean }) {
   return (
     <>
       <button
-        className={compact ? "primary-button mobile-create-button" : "primary-button"}
+        className={
+          editTrigger
+            ? "task-edit-button"
+            : compact
+              ? "primary-button mobile-create-button"
+              : "primary-button"
+        }
         type="button"
-        aria-label="Create new task"
+        aria-label={initialTask ? `Edit ${initialTask.title}` : "Create new task"}
         onClick={() => setOpen(true)}
       >
-        <Plus size={18} />
-        {!compact && <span>New task</span>}
+        {initialTask ? <Pencil size={15} /> : <Plus size={18} />}
+        {!iconOnly && (
+          <span>{initialTask ? "Edit" : compact ? "" : "New task"}</span>
+        )}
       </button>
 
       {open && typeof document !== "undefined" && createPortal(
@@ -107,8 +195,8 @@ export function TaskModal({ compact = false }: { compact?: boolean }) {
           >
             <header className="modal-header">
               <div>
-                <p className="eyebrow">Create block</p>
-                <h2 id="task-modal-title">New task</h2>
+                <p className="eyebrow">{initialTask ? "Edit block" : "Create block"}</p>
+                <h2 id="task-modal-title">{initialTask ? "Edit task" : "New task"}</h2>
               </div>
               <button className="icon-button" type="button" aria-label="Close" onClick={() => setOpen(false)}>
                 <X size={20} />
@@ -118,30 +206,51 @@ export function TaskModal({ compact = false }: { compact?: boolean }) {
             <form action={submit} className="task-form">
               <label>
                 Task title
-                <input name="title" required placeholder="Deep work session" />
+                <input
+                  name="title"
+                  required
+                  placeholder="Deep work session"
+                  defaultValue={initialTask?.title ?? ""}
+                />
               </label>
               <label>
                 Description
-                <textarea name="description" rows={2} placeholder="Optional notes" />
+                <textarea
+                  name="description"
+                  rows={2}
+                  placeholder="Optional notes"
+                  defaultValue={initialTask?.description ?? ""}
+                />
               </label>
 
               <div className="form-grid">
                 <label>
                   Duration
                   <span className="input-suffix">
-                    <input name="durationMinutes" type="number" min="1" defaultValue="30" required />
+                    <input
+                      name="durationMinutes"
+                      type="number"
+                      min="1"
+                      defaultValue={initialTask?.durationMinutes ?? 30}
+                      required
+                    />
                     <span>min</span>
                   </span>
                 </label>
                 <label>
                   Time
-                  <input name="time" type="time" defaultValue="09:00" required />
+                  <input
+                    name="time"
+                    type="time"
+                    defaultValue={initialTask?.intradayTimes[0] ?? "09:00"}
+                    required
+                  />
                 </label>
               </div>
 
               <label>
                 Repeat
-                <select name="recurrence" defaultValue="one-time">
+                <select name="recurrence" defaultValue={initialForm.recurrence}>
                   <option value="one-time">One time</option>
                   <option value="daily">Every day</option>
                   <option value="weekdays">Selected weekdays</option>
@@ -153,11 +262,18 @@ export function TaskModal({ compact = false }: { compact?: boolean }) {
               <div className="form-grid">
                 <label>
                   Date
-                  <input name="oneTimeDate" type="date" defaultValue={new Date().toLocaleDateString("en-CA")} />
+                  <input
+                    name="oneTimeDate"
+                    type="date"
+                    defaultValue={
+                      initialForm.startDate ||
+                      new Date().toLocaleDateString("en-CA")
+                    }
+                  />
                 </label>
                 <label>
                   Interval
-                  <input name="interval" type="number" min="1" defaultValue="2" />
+                  <input name="interval" type="number" min="1" defaultValue={initialForm.interval} />
                 </label>
               </div>
 
@@ -165,7 +281,12 @@ export function TaskModal({ compact = false }: { compact?: boolean }) {
                 <legend>Weekdays</legend>
                 {[1, 2, 3, 4, 5, 6, 7].map((day) => (
                   <label className="weekday" key={day}>
-                    <input type="checkbox" name={`weekday-${day}`} value={day} />
+                    <input
+                      type="checkbox"
+                      name={`weekday-${day}`}
+                      value={day}
+                      defaultChecked={initialForm.weekdays.includes(day)}
+                    />
                     {["M", "T", "W", "T", "F", "S", "S"][day - 1]}
                   </label>
                 ))}
@@ -177,21 +298,39 @@ export function TaskModal({ compact = false }: { compact?: boolean }) {
                   <strong>Enable data tracking</strong>
                   <small>Log a value when completing this task</small>
                 </span>
-                <input name="isTracked" type="checkbox" />
+                <input
+                  name="isTracked"
+                  type="checkbox"
+                  defaultChecked={initialTask?.isTracked ?? false}
+                />
               </label>
 
               <div className="form-grid">
                 <label>
                   Metric
-                  <input name="metricName" placeholder="Distance" />
+                  <input
+                    name="metricName"
+                    placeholder="Distance"
+                    defaultValue={initialTask?.trackingConfig?.metricName ?? ""}
+                  />
                 </label>
                 <label>
                   Unit
-                  <input name="unit" placeholder="km" />
+                  <input
+                    name="unit"
+                    placeholder="km"
+                    defaultValue={initialTask?.trackingConfig?.unit ?? ""}
+                  />
                 </label>
                 <label>
                   Target
-                  <input name="targetValue" type="number" step="any" placeholder="5" />
+                  <input
+                    name="targetValue"
+                    type="number"
+                    step="any"
+                    placeholder="5"
+                    defaultValue={initialTask?.trackingConfig?.targetValue ?? ""}
+                  />
                 </label>
               </div>
 
@@ -199,7 +338,14 @@ export function TaskModal({ compact = false }: { compact?: boolean }) {
                 <legend>Color</legend>
                 {colors.map((color) => (
                   <label key={color}>
-                    <input type="radio" name="color" value={color} defaultChecked={color === colors[0]} />
+                    <input
+                      type="radio"
+                      name="color"
+                      value={color}
+                      defaultChecked={
+                        color === (initialTask?.color ?? colors[0])
+                      }
+                    />
                     <span style={{ backgroundColor: color }} />
                   </label>
                 ))}
@@ -208,7 +354,13 @@ export function TaskModal({ compact = false }: { compact?: boolean }) {
               {error && <p className="form-error">{error}</p>}
 
               <button className="primary-button full-width" type="submit" disabled={submitting}>
-                {submitting ? "Creating..." : "Create task"}
+                {submitting
+                  ? initialTask
+                    ? "Saving..."
+                    : "Creating..."
+                  : initialTask
+                    ? "Save changes"
+                    : "Create task"}
               </button>
             </form>
           </section>

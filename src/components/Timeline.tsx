@@ -18,11 +18,13 @@ import {
   scheduleToToday,
   setOccurrenceStatus,
 } from "@/actions/tasks";
+import { TaskModal } from "@/components/TaskModal";
 
 type TimelineProps = {
   date: string;
   occurrences: TimelineOccurrence[];
   unscheduled: RecurrenceTask[];
+  tasks: RecurrenceTask[];
 };
 
 function addDays(date: string, amount: number): string {
@@ -40,7 +42,7 @@ function formatHeader(date: string): string {
   }).format(new Date(year, month - 1, day));
 }
 
-export function Timeline({ date, occurrences, unscheduled }: TimelineProps) {
+export function Timeline({ date, occurrences, unscheduled, tasks }: TimelineProps) {
   const router = useRouter();
   const [inboxOpen, setInboxOpen] = useState(false);
   const [rescheduling, setRescheduling] = useState<string | null>(null);
@@ -180,6 +182,19 @@ export function Timeline({ date, occurrences, unscheduled }: TimelineProps) {
                         {occurrence.description && <p>{occurrence.description}</p>}
                       </div>
                       <div className="task-actions">
+                        {tasks
+                          .find((task) => task._id === occurrence.taskId) &&
+                          (
+                            <TaskModal
+                              initialTask={
+                                tasks.find(
+                                  (task) => task._id === occurrence.taskId,
+                                )
+                              }
+                              editTrigger
+                              iconOnly
+                            />
+                          )}
                         <button type="button" aria-label={`Skip ${occurrence.title}`} onClick={() => skip(occurrence)}>
                           <SkipForward size={15} />
                         </button>

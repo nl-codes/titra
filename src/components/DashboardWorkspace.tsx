@@ -47,7 +47,12 @@ export function DashboardWorkspace({
       </div>
 
       {view === "timeline" ? (
-        <Timeline date={date} occurrences={occurrences} unscheduled={unscheduled} />
+        <Timeline
+          date={date}
+          tasks={tasks}
+          occurrences={occurrences}
+          unscheduled={unscheduled}
+        />
       ) : (
         <TaskList tasks={tasks} />
       )}

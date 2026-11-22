@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Clock3, Repeat2, Target, X } from "lucide-react";
+import { TaskModal } from "@/components/TaskModal";
 import type { RecurrenceTask } from "@/lib/recurrence";
 
 function recurrenceLabel(task: RecurrenceTask): string {
@@ -71,11 +72,17 @@ export function TaskList({ tasks }: { tasks: RecurrenceTask[] }) {
       ) : (
         <div className="task-list">
           {tasks.map((task) => (
-            <button
+            <div
               className="task-list-row"
-              type="button"
               key={task._id}
+              role="button"
+              tabIndex={0}
               onClick={() => setSelectedTaskId(task._id)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  setSelectedTaskId(task._id);
+                }
+              }}
             >
               <span className="task-list-color" style={{ backgroundColor: task.color }} />
               <span className="task-list-main">
@@ -86,7 +93,13 @@ export function TaskList({ tasks }: { tasks: RecurrenceTask[] }) {
                 <span><Clock3 size={14} /> {task.durationMinutes} min</span>
                 <span><Repeat2 size={14} /> {recurrenceLabel(task)}</span>
               </span>
-            </button>
+              <span
+                className="task-list-edit"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <TaskModal initialTask={task} editTrigger iconOnly />
+              </span>
+            </div>
           ))}
         </div>
       )}
@@ -108,14 +121,17 @@ export function TaskList({ tasks }: { tasks: RecurrenceTask[] }) {
             >
               <header className="task-detail-header">
                 <span className="task-detail-color" style={{ backgroundColor: selectedTask.color }} />
-                <button
-                  className="icon-button"
-                  type="button"
-                  aria-label="Close task details"
-                  onClick={() => setSelectedTaskId(null)}
-                >
-                  <X size={20} />
-                </button>
+                <span className="task-detail-actions">
+                  <TaskModal initialTask={selectedTask} editTrigger />
+                  <button
+                    className="icon-button"
+                    type="button"
+                    aria-label="Close task details"
+                    onClick={() => setSelectedTaskId(null)}
+                  >
+                    <X size={20} />
+                  </button>
+                </span>
               </header>
 
               <p className="eyebrow">Task details</p>

@@ -117,6 +117,76 @@ export async function createTask(input: CreateTaskInput): Promise<{
   }
 }
 
+export async function updateTask(
+  taskId: string,
+  input: CreateTaskInput,
+): Promise<{ success: boolean; error?: string }> {
+  if (!taskId) {
+    return { success: false, error: "Task is required." };
+  }
+  if (!input.title.trim()) {
+    return { success: false, error: "Task title is required." };
+  }
+
+  if (
+    input.recurrence !== "one-time" &&
+    (!/^\d{4}-\d{2}-\d{2}$/.test(input.oneTimeDate) ||
+      !/^([01]\d|2[0-3]):[0-5]\d$/.test(input.time) ||
+      !Number.isFinite(input.durationMinutes) ||
+      input.durationMinutes < 1)
+  ) {
+    return {
+      success: false,
+      error: "Choose a valid date and enter a valid time and duration.",
+    };
+  }
+
+  if (
+    input.recurrence === "one-time" &&
+    (!/^\d{4}-\d{2}-\d{2}$/.test(input.oneTimeDate) ||
+      !/^([01]\d|2[0-3]):[0-5]\d$/.test(input.time))
+  ) {
+    return { success: false, error: "Choose a valid date and time." };
+  }
+
+  try {
+    await connectToDatabase();
+    const startDate = parseLocalDate(input.oneTimeDate);
+
+    await TaskModel.updateOne(
+      { _id: taskId, userId: "demo-user" },
+      {
+        $set: {
+          title: input.title.trim(),
+          description: input.description.trim(),
+          durationMinutes: input.durationMinutes,
+          isRecurring: input.recurrence !== "one-time",
+          rruleString: recurrenceRule(input, startDate),
+          intradayTimes: input.time ? [input.time] : [],
+          oneTimeDate: input.recurrence === "one-time" ? input.oneTimeDate : null,
+          isTracked: input.isTracked,
+          trackingConfig: input.isTracked
+            ? {
+                metricName: input.metricName.trim(),
+                unit: input.unit.trim(),
+                targetValue: input.targetValue ?? undefined,
+              }
+            : undefined,
+          color: input.color,
+        },
+      },
+    );
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Could not update task.",
+    };
+  }
+}
+
 export async function setOccurrenceStatus(input: {
   taskId: string;
   scheduledDate: string;
